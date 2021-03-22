@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
-project(coverage-test VERSION 1.0.00 LANGUAGES CXX)
+project(coverage-test VERSION 1.0.01 LANGUAGES CXX)
 
 ###############################################################################
 # Build options

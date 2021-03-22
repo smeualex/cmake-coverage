@@ -9,7 +9,7 @@ SET CONFIG=Debug
 SET GENERATOR="Visual Studio 14 2015"
 SET BUILD_DIR=build\%ARCH%\%CONFIG%
 
-call :log " >> Building BIPS - %CONFIG% with %GENERATOR%" 
+call :log " >> Building main-exe - %CONFIG% with %GENERATOR%" 
 
 call :log " >> CMake Configure..." 
 cmake -S . -B %BUILD_DIR% -G %GENERATOR% -A %ARCH% -DCMAKE_BUILD_TYPE=%CONFIG% -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON

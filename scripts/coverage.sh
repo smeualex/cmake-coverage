@@ -1,7 +1,7 @@
 #!/bin/bash
 # get architecture - i386/x86_64/etc
 ARCH=`lscpu | grep -e "Architecture" | awk '{print $2}'`
-CONFIG=Release
+CONFIG=Debug
 GENERATOR="Unix Makefiles"
 BUILD_DIR=${HOME}/build/cmake-coverage/Linux-${ARCH}/${CONFIG}
 
@@ -34,7 +34,7 @@ function main {
     log " >> directory = ${SOURCE_DIR}"
 
     log " >> CMake configure..."
-    cmake -S ${SOURCE_DIR} -B "${BUILD_DIR}" -G "${GENERATOR}" -DCMAKE_BUILD_TYPE=${CONFIG} -DBUILD_TESTS=ON
+    cmake -S ${SOURCE_DIR} -B "${BUILD_DIR}" -G "${GENERATOR}" -DCMAKE_BUILD_TYPE=${CONFIG} -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON -DCODE_COVERAGE=ON
     err=$?
     check_error $err "ERROR - CMake configure; err=${err}"
 
@@ -44,9 +44,19 @@ function main {
     check_error $err "ERROR - CMake build; err=${err}"
 
     pushd ${BUILD_DIR}
-        log " >> CMake CTest..."
-        ctest --build-config ${CONFIG}
+        #log " >> CMake CTest..."
+        #ctest --build-config ${CONFIG}
+        log " >> Running coverage..."
+        make ccov-all
+        err=$?
+        check_error $err "ERROR - CMake CTest; err=${err}"
+
+        log " >> Copy ccov report to host..."
+        copy_dir ./ccov /vagrant/build/Linux-${ARCH}/${CONFIG}
     popd
+
+    log " >> DONE"
+    log "============================================================================="
 }
 
 function log {
@@ -75,13 +85,13 @@ function check_gcc_version {
         log "   >> GCC 9 Found"
         gcc_8_present=true
     else
-        log "   >> GCC 8 not found - PLEASE UPDATE GCC!!!"
+        log "   >> GCC 9 not found - PLEASE UPDATE GCC!!!"
         gcc_8_present=false
         exit
     fi
 }
 
-# set SC8IPT_DIR with the script's location
+# set SCRIPT_DIR with the script's location
 # this is where the CMakeLists.txt file is present
 function get_source_dir {
     SOURCE="${BASH_SOURCE[0]}"

@@ -7,6 +7,9 @@ function log {
 
 log "Install script started..."
 
+log "Updating apt..."
+apt-get update
+
 log "Installing tmux..."
 apt-get install tmux time
 

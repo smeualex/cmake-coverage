@@ -6,9 +6,6 @@ project(lib1-test LANGUAGES CXX)
 # TEST BUILD
 ###############################################################################
 if(BUILD_TESTS)
-    if(LOG_CMAKE_VARIABLES)
-        message(STATUS " ${PROJECT_NAME}  |  >>>>>    Catch2 HINTS = " ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2)
-    endif()
     find_package(Catch2 REQUIRED
         HINTS ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2
     )
@@ -30,11 +27,37 @@ if(BUILD_TESTS)
         ${TEST_SOURCES}
     )
 
+    ###############################################################################
     # add static dependencies
+    ###############################################################################
+    if(CODE_COVERAGE)
+        # https://stackoverflow.com/questions/38107459/generating-test-coverage-of-c-static-library-as-called-by-separate-test-classe
+        # https://stackoverflow.com/questions/17949384/link-issue-with-whole-archive-no-whole-archive-options
+        #
+        #   add the whole static library to be visible by gcov
+        #   $<TARGET_FILE:lib1> generator expression evaluates to the full path of the binary produced by the targed `lib1`
+        #
+        target_link_options(${PROJECT_NAME} PRIVATE 
+            -Wl,--whole-archive $<TARGET_FILE:lib1> -Wl,--no-whole-archive
+        )
+    else()
+        target_link_libraries(${PROJECT_NAME} PRIVATE
+            lib1
+        )
+    endif()
+
     target_link_libraries(${PROJECT_NAME} PRIVATE
-        lib1
         Catch2::Catch2
     )
+
+    ###############################################################################
+    # Code coverage instrumentation
+    ###############################################################################
+    if(CODE_COVERAGE)
+        target_code_coverage(${PROJECT_NAME} ALL
+            EXCLUDE ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/include/*
+        )
+    endif()
 
      # include directories
     target_include_directories(${PROJECT_NAME} PRIVATE

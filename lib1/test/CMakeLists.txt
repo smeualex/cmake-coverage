@@ -6,6 +6,9 @@ project(lib1-test LANGUAGES CXX)
 # TEST BUILD
 ###############################################################################
 if(BUILD_TESTS)
+    if(LOG_CMAKE_VARIABLES)
+        message(STATUS " ${PROJECT_NAME}  |  >>>>>    Catch2 HINTS = " ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2)
+    endif()
     find_package(Catch2 REQUIRED
         HINTS ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2
     )

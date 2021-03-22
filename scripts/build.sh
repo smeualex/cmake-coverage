@@ -3,7 +3,7 @@
 ARCH=`lscpu | grep -e "Architecture" | awk '{print $2}'`
 CONFIG=Release
 GENERATOR="Unix Makefiles"
-BUILD_DIR=${HOME}/BIPS-build/Linux-${ARCH}/${CONFIG}
+BUILD_DIR=${HOME}/build/cmake-coverage/Linux-${ARCH}/${CONFIG}
 
 gcc_8_present=false
 
@@ -21,15 +21,6 @@ function copy_build_artifacts {
     cp ${src} ${dstDir}
 }
 
-function copy_build_artifacts_guest2host {
-    guestBinaryDir=${BUILD_DIR}/BIPS
-    destDir=/vagrant/build/Linux-${ARCH}/${CONFIG}
-    log " > Copying artifacts to: ${destDir}"
-    copy_build_artifacts ${guestBinaryDir}/bips ${destDir}
-    copy_build_artifacts ${guestBinaryDir}/libbizlineprn.so ${destDir}
-    copy_build_artifacts ${guestBinaryDir}/bips.config.json ${destDir}
-}
-
 function main {
     log "============================================================================="
     # GCC ver > 8.3.0 is required
@@ -39,7 +30,7 @@ function main {
     # get the script's location
     get_source_dir
 
-    log " >> Building BIPS - ${CONFIG}-${ARCH}"
+    log " >> Building cmake-coverage - ${CONFIG}-${ARCH}"
     log " >> directory = ${SOURCE_DIR}"
 
     log " >> CMake configure..."
@@ -58,8 +49,6 @@ function main {
         err=$?
         check_error $err "ERROR - CMake CTest; err=${err}"
     popd
-
-    copy_build_artifacts_guest2host
 
     log " >> DONE"
     log "============================================================================="

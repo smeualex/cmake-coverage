@@ -44,6 +44,6 @@ call :log "=====================================================================
 :endWithErrors
     call :log "Exiting with error = %ERRORLEVEL%"
     cd %mypath%
-    cmd /k
+    
 
 :end

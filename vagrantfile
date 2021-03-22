@@ -1,0 +1,52 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version
+# Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+# vm will be configured with a host only network adapter
+# set with the following static ip
+STATIC_IP_ADDRESS__1="192.168.50.100"
+# name of the vm
+VM_NAME_DEBIAN="vagrant-debian10-i386"
+
+Vagrant.require_version ">= 1.5"
+
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    # UNCOMMENT BELOW FOR PROXY SETTINGS
+    # # configure proxy for vagrant
+    # if Vagrant.has_plugin?("vagrant-proxyconf")
+    #     config.proxy.http     = "http://user:passwd@ip:port/"
+    #     config.proxy.https    = "https://user:passwd@ip:port/"
+    #     config.proxy.no_proxy = "localhost,127.0.0.1"
+    # end
+    ###################################################################################################
+    ## Debian10 BOX - build machine for i586
+    ###################################################################################################
+    config.vm.define "debian10-build-box" do |debian|
+        debian.vm.box = "smeualex/debian10-i686"
+        debian.vm.box_version = "1.0.0"
+        debian.vm.define VM_NAME_DEBIAN
+        # set current directory as shared folder mapped into /vagrant
+        debian.vm.synced_folder ".", "/vagrant", owner: "vagrant", group: "vagrant", type: "virtualbox"
+        # private network with a static ip accesible from the host
+        debian.vm.network "private_network", ip: STATIC_IP_ADDRESS__1
+        # hostname
+        debian.vm.hostname = VM_NAME_DEBIAN
+
+        # VirtualBox settings
+        debian.vm.provider "virtualbox" do |vb|
+            vb.name     = VM_NAME_DEBIAN
+            vb.cpus     = 2
+            vb.memory   = 1024
+        end
+
+        # set to fix auto login via ssh for user vagrant
+        # sometimes it does not work and you have to manually input the password
+        config.vm.provision :shell, :inline => "sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; sudo systemctl restart sshd;", run: "always"
+
+        debian.vm.provision :shell, :path => "./scripts/vagrant/bootstrap-debian.sh"
+        debian.vm.post_up_message = "echo     ---- Debian10 VM is up! ---- "
+    end
+end

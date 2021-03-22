@@ -6,8 +6,6 @@ project(lib1-test LANGUAGES CXX)
 # TEST BUILD
 ###############################################################################
 if(BUILD_TESTS)
-    include(code-coverage)
-
     find_package(Catch2 REQUIRED
         HINTS ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2
     )
@@ -55,9 +53,11 @@ if(BUILD_TESTS)
     ###############################################################################
     # Code coverage instrumentation
     ###############################################################################
-    target_code_coverage(${PROJECT_NAME}
-        EXCLUDE /vagrant/extern/libs/prebuilt/catch2/include/*
-    )
+    if(CODE_COVERAGE)
+        target_code_coverage(${PROJECT_NAME} ALL
+            EXCLUDE /vagrant/extern/libs/prebuilt/catch2/include/*
+        )
+    endif()
 
      # include directories
     target_include_directories(${PROJECT_NAME} PRIVATE

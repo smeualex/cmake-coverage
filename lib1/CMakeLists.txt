@@ -17,7 +17,9 @@ add_library(${PROJECT_NAME} STATIC ${ALL_SOURCES})
 ###############################################################################
 # Code coverage instrumentation
 ###############################################################################
-target_code_coverage(${PROJECT_NAME})
+if(CODE_COVERAGE)
+    target_code_coverage(${PROJECT_NAME} ALL)
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     ${CMAKE_CURRENT_LIST_DIR}/src

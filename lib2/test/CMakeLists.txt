@@ -53,9 +53,11 @@ if(BUILD_TESTS)
     ###############################################################################
     # Code coverage instrumentation
     ###############################################################################
-    target_code_coverage(${PROJECT_NAME}
-        EXCLUDE /vagrant/extern/libs/prebuilt/catch2/include/*
-    )
+    if(CODE_COVERAGE)
+        target_code_coverage(${PROJECT_NAME} ALL
+            EXCLUDE /vagrant/extern/libs/prebuilt/catch2/include/*
+        )
+    endif()
 
      # include directories
     target_include_directories(${PROJECT_NAME} PRIVATE

@@ -18,7 +18,11 @@ if(LOG_CMAKE_VARIABLES)
     message(STATUS " ${PROJECT_NAME}  |  >>>>>    CMAKE_MODULE_PATH              = " ${CMAKE_MODULE_PATH})
 endif()
 
-include(code-coverage)
+if(CODE_COVERAGE)
+    include(code-coverage)
+    add_code_coverage_all_targets()
+endif()
+
 enable_testing()
 
 add_subdirectory(lib1)

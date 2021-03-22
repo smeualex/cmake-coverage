@@ -47,20 +47,3 @@ jobs:
           install-build: false
           # run build using '-j [parallel]' to use multiple threads to build
           parallel: 8
-        
-      - name: Debug-Coverage
-        uses: ashutoshvarma/action-cmake-build@master
-        with:
-          build-dir: ${{ runner.workspace }}/build
-          # will set the CC & CXX for cmake
-          cc: gcc
-          cxx: g++
-          build-type: Release
-          # Extra options pass to cmake while configuring project
-          configure-options: -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON -DCODE_COVERAGE=ON
-          run-test: true
-          ctest-options: -s
-          # install the build using cmake --install
-          install-build: false
-          # run build using '-j [parallel]' to use multiple threads to build
-          parallel: 8

@@ -1,0 +1,1 @@
+int lib2_sum(const int& a, const int& b);

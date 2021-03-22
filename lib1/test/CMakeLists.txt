@@ -6,6 +6,8 @@ project(lib1-test LANGUAGES CXX)
 # TEST BUILD
 ###############################################################################
 if(BUILD_TESTS)
+    include(code-coverage)
+
     if(LOG_CMAKE_VARIABLES)
         message(STATUS " ${PROJECT_NAME}  |  >>>>>    Catch2 HINTS = " ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2)
     endif()
@@ -41,6 +43,11 @@ if(BUILD_TESTS)
         ../src
         .
     )
+
+    ###############################################################################
+    # Code coverage instrumentation
+    ###############################################################################
+    target_code_coverage(${PROJECT_NAME})
 
     ###############################################################################
     # CTEST

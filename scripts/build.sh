@@ -1,7 +1,7 @@
 #!/bin/bash
 # get architecture - i386/x86_64/etc
 ARCH=`lscpu | grep -e "Architecture" | awk '{print $2}'`
-CONFIG=Release
+CONFIG=Debug
 GENERATOR="Unix Makefiles"
 BUILD_DIR=${HOME}/build/cmake-coverage/Linux-${ARCH}/${CONFIG}
 
@@ -10,7 +10,7 @@ gcc_8_present=false
 # project directory
 SOURCE_DIR=''
 
-function copy_build_artifacts {
+function copy_dir {
     src=$1
     dstDir=$2
 
@@ -18,7 +18,7 @@ function copy_build_artifacts {
 
     # create the destination directory if it doesn't exist
     [ ! -d "${dstDir}" ] && mkdir -p ${dstDir}
-    cp ${src} ${dstDir}
+    cp -R ${src} ${dstDir}
 }
 
 function main {
@@ -34,7 +34,7 @@ function main {
     log " >> directory = ${SOURCE_DIR}"
 
     log " >> CMake configure..."
-    cmake -S ${SOURCE_DIR} -B "${BUILD_DIR}" -G "${GENERATOR}" -DCMAKE_BUILD_TYPE=${CONFIG} -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON
+    cmake -S ${SOURCE_DIR} -B "${BUILD_DIR}" -G "${GENERATOR}" -DCMAKE_BUILD_TYPE=${CONFIG} -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON -DCODE_COVERAGE=ON
     err=$?
     check_error $err "ERROR - CMake configure; err=${err}"
 
@@ -44,10 +44,15 @@ function main {
     check_error $err "ERROR - CMake build; err=${err}"
 
     pushd ${BUILD_DIR}
-        log " >> CMake CTest..."
-        ctest --build-config ${CONFIG}
+        #log " >> CMake CTest..."
+        #ctest --build-config ${CONFIG}
+        log " >> Running coverage..."
+        make ccov-lib1-test
         err=$?
         check_error $err "ERROR - CMake CTest; err=${err}"
+
+        log " >> Copy ccov report to host..."
+        copy_dir ./ccov /vagrant/build/Linux-${ARCH}/${CONFIG}
     popd
 
     log " >> DONE"

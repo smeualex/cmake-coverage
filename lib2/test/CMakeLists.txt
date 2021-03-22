@@ -27,10 +27,34 @@ if(BUILD_TESTS)
         ${TEST_SOURCES}
     )
 
+    ###############################################################################
     # add static dependencies
+    ###############################################################################
+    if(CODE_COVERAGE)
+        # https://stackoverflow.com/questions/38107459/generating-test-coverage-of-c-static-library-as-called-by-separate-test-classe
+        # https://stackoverflow.com/questions/17949384/link-issue-with-whole-archive-no-whole-archive-options
+        #
+        #   add the whole static library to be visible by gcov
+        #   $<TARGET_FILE:lib1> generator expression evaluates to the full path of the binary produced by the targed `lib1`
+        #
+        target_link_options(${PROJECT_NAME} PRIVATE 
+            -Wl,--whole-archive $<TARGET_FILE:lib2> -Wl,--no-whole-archive
+        )
+    else()
+        target_link_libraries(${PROJECT_NAME} PRIVATE
+            lib2
+        )
+    endif()
+
     target_link_libraries(${PROJECT_NAME} PRIVATE
-        lib2
         Catch2::Catch2
+    )
+
+    ###############################################################################
+    # Code coverage instrumentation
+    ###############################################################################
+    target_code_coverage(${PROJECT_NAME}
+        EXCLUDE /vagrant/extern/libs/prebuilt/catch2/include/*
     )
 
      # include directories

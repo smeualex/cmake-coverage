@@ -19,9 +19,7 @@ add_library(${PROJECT_NAME} STATIC ${ALL_SOURCES})
 ###############################################################################
 # Code coverage instrumentation
 ###############################################################################
-target_code_coverage(${PROJECT_NAME}
-    EXCLUDE ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/lib/cmake/Catch2/include/*
-)
+target_code_coverage(${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     ${CMAKE_CURRENT_LIST_DIR}/src

@@ -46,8 +46,9 @@ jobs:
       run: |
         sudo apt-get install -y lcov
 
-    - name: Clone the repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Debug-Coverage
+      uses: ashutoshvarma/action-cmake-build@master
       with:
         build-dir: ${{ runner.workspace }}/build
         # will set the CC & CXX for cmake
@@ -61,16 +62,8 @@ jobs:
         # install the build using cmake --install
         install-build: false
         parallel: 8
-        
-    - name: Run script stuff
-      run: |
-        echo "================================================================================"
-        ls -lha /home/runner/work/cmake-coverage/build/
-        echo "================================================================================"
-        ls -lha /home/runner/work/cmake-coverage/build/Linux-i686/Debug/ccov
-        echo "================================================================================"
-    - name: Upload the coverage data
-      uses: actions/upload-artifact@v2
+              
+    - uses: actions/upload-artifact@v2
       with:
         name: code-coverage-data
         path: /home/runner/work/cmake-coverage/build/Linux-i686/Debug/ccov/*.info

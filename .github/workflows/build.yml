@@ -20,7 +20,7 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2      
+      - uses: actions/checkout@v2
       - name: Release-Test
       - uses: ashutoshvarma/action-cmake-build@master
         with:
@@ -38,14 +38,22 @@ jobs:
           # run build using '-j [parallel]' to use multiple threads to build
           parallel: 8
   
-  coverage:
+  coverage_report:
+    name: Generate coverage report
+    needs: testing
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2      
-      - name: Coverage
-      - uses: devmasx/coverage-check-action@v1.2.0
-        with:
-          type: lcov
-          result_path: coverage/example.lcov
-          min_coverage: 90
-          token: ${{ github.token }}
+    - name: Clone the repository
+      uses: actions/checkout@v2
+    - name: Download code coverage from GitHub
+      uses: actions/download-artifact@v2
+      with:
+        name: code-coverage
+        path: coverage
+    - name: Report code coverage
+      uses: zgosalvez/github-actions-report-lcov@26957abb761285d2a89b2d47f77f0fe7965c437e
+      with:
+        coverage-files: ccov/*.info
+        minimum-coverage: 50
+        artifact-name: code-coverage-report
+        github-token: ${{ secrets.GITHUB_TOKEN }}

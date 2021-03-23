@@ -8,3 +8,4 @@ External libraries\modules used:
 
 
 ![Build status](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml/badge.svg)
+[![CI](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml)

@@ -3,9 +3,12 @@
 A simple-ish project using CMake and gcov to generate coverage reports.
 The sub-projects are simply named `lib1`, `lib2` and `main-exe` for the sake of clarity.
 
-External libraries\modules used:
-- Catch2 - https://github.com/catchorg/Catch2
-- cmake-coverage.cmake module https://github.com/StableCoder/cmake-scripts
+External libraries\modules\tools used:
+- [Catch2](https://github.com/catchorg/Catch2)  - excelent C++ testing library
+- [cmake-coverage.cmake](https://github.com/StableCoder/cmake-scripts)  - CMake module facilitating the use of gcov
+- [Vagrant](https://www.vagrantup.com)   - " tool for building and managing virtual machine environments in a single workflow."
+- [VirtualBox](https://www.virtualbox.org)
+
 
 
 [![CI](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml)
@@ -56,6 +59,15 @@ In each project the CMakeFiles.txt are as follows:
     |   \---CMakeLists.txt      -> build the test code (only if BUILD_TEST is ON)
     \---CMakeLists.txt          -> build the code found in src and includes the test subdirectory
 ```
+
+### Windows
+The build script is `./scripts/build_Debug.bat`.
+
+### Linux
+`./scripts/build.sh`    - "release" build
+`./scripts/coverage.sh` - "debug" build with coverage data
+
+The Linux build scripts are created to be run inside a Vagrant box which is created from the projects `vagrantfile`.
 
 ## Getting coverage reports
 
@@ -125,6 +137,8 @@ Getting coverage data for a static library, is a bit of a hassle (it was to be e
 Even though in the examples the file is included and the functions are called directly I found it has some problems when you use the same CMake files to build a `Release` without code coverage.
 
 _By `Release` build in terms of G++ I mean an executable with its debug symbols stripped and with optimizations turned on_
+
+Can create individual targets for subprojects or create a single merged target containing all the subprojects coverage information.
 
 ### How it's used in this project (and how I got coverage from a static library)
 
@@ -214,4 +228,20 @@ endif()
 include(CTest)
 include(Catch)
 catch_discover_tests(${PROJECT_NAME})
+```
+
+With everything set in CMake, the actual coverage data is created by running the appropriate targets.
+
+In this case `make ccov-all` in the build directory. This is done in `./scripts/coverage.sh`
+
+```bash
+pushd ${BUILD_DIR}
+    log " >> Running coverage..."
+    make ccov-all
+    err=$?
+    check_error $err "ERROR - CMake CTest; err=${err}"
+
+    log " >> Copy ccov report to host..."
+    copy_dir ./ccov /vagrant/build/Linux-${ARCH}/${CONFIG}
+popd
 ```

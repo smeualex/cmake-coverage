@@ -15,5 +15,5 @@
 *.png binary
 *.jpg binary
 
-# bash scripts must always have CR line endings
-*.sh text eol=cr
+# bash scripts must always have LF line endings
+*.sh text eol=lf

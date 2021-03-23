@@ -62,7 +62,12 @@ jobs:
         # install the build using cmake --install
         install-build: false
         parallel: 8
-              
+    
+    - shell: bash
+      name: Run gcov
+      run: |
+        cd /home/runner/work/cmake-coverage/build/Linux-i686/Debug
+        make ccov_all
     - uses: actions/upload-artifact@v2
       with:
         name: code-coverage-data

@@ -16,8 +16,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
+    name: Build and test the release
     runs-on: ubuntu-latest
-
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
           # will set the CC & CXX for cmake
           cc: gcc
           cxx: g++
-          build-type: Debug
+          build-type: Release
           # Extra options pass to cmake while configuring project
           configure-options: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON
           run-test: true
@@ -38,8 +38,8 @@ jobs:
           # run build using '-j [parallel]' to use multiple threads to build
           parallel: 8
   
-  testing:
-    name: Test and generate coverage report
+  coverage:
+    name: Generate coverage info
     runs-on: ubuntu-latest
     steps:
     - name: Install gcov
@@ -55,17 +55,33 @@ jobs:
         cxx: g++
         build-type: Debug
         # Extra options pass to cmake while configuring project
-        configure-options: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON -DCODE_COVERAGE=ON
+        configure-options: -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON -DCODE_COVERAGE=ON
         run-test: true
         ctest-options: -s
         # install the build using cmake --install
         install-build: false
         parallel: 8
+        
+    - name: Upload the coverage data
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage-data
+        path: /home/runner/work/cmake-coverage/build/Linux-i686/Debug/ccov/*.info
 
-    - name: Report code coverage
+  coverage-report:
+    name: Generate coverage report
+    runs-on: ubuntu-latest
+    needs: coverage
+    steps:
+    - name: Download coverage data
+      uses: actions/download-artifact@v2
+      with:
+        name: code-coverage-data
+    - name: Coverage report
       uses: zgosalvez/github-actions-report-lcov@26957abb761285d2a89b2d47f77f0fe7965c437e
       with:
         coverage-files: ccov/*.info
-        minimum-coverage: 50
+        minimum-coverage: 0
+        working-directory: ${{ runner.workspace }}
         artifact-name: code-coverage-report
         github-token: ${{ secrets.GITHUB_TOKEN }}

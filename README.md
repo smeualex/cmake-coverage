@@ -136,17 +136,17 @@ The solution is a bit hacky, but it works, so I'm fine with it.
 
 If we're running a coverage build, link the library "manually" by setting `target_link_options` between the 2 linker flas; if not, use the normal "CMakey" way; then continue by adding the rest of the dependencies.
 
-    ```CMake
-    if(CODE_COVERAGE)
-        target_link_options(${PROJECT_NAME} PRIVATE 
-            -Wl,--whole-archive $<TARGET_FILE:lib1> -Wl,--no-whole-archive
-        )
-    else()
-        target_link_libraries(${PROJECT_NAME} PRIVATE
-            lib1
-        )
-    endif()
-    ```
+```CMake
+if(CODE_COVERAGE)
+    target_link_options(${PROJECT_NAME} PRIVATE 
+        -Wl,--whole-archive $<TARGET_FILE:lib1> -Wl,--no-whole-archive
+    )
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        lib1
+    )
+endif()
+```
 
 
 #### /CMakeLists.txt
@@ -178,40 +178,40 @@ endif()
 #### /lib1/test/CMakeLists.txt
 
 ```CMake
-    if(CODE_COVERAGE)
-        # https://stackoverflow.com/questions/38107459/generating-test-coverage-of-c-static-library-as-called-by-separate-test-classe
-        # https://stackoverflow.com/questions/17949384/link-issue-with-whole-archive-no-whole-archive-options
-        #
-        #   add the whole static library to be visible by gcov
-        #   $<TARGET_FILE:lib1> generator expression evaluates to the full path 
-        #                       of the binary produced by the targed `lib1`
-        #
-        target_link_options(${PROJECT_NAME} PRIVATE 
-            -Wl,--whole-archive $<TARGET_FILE:lib1> -Wl,--no-whole-archive
-        )
-    else()
-        target_link_libraries(${PROJECT_NAME} PRIVATE
-            lib1
-        )
-    endif()
-
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        Catch2::Catch2
+if(CODE_COVERAGE)
+    # https://stackoverflow.com/questions/38107459/generating-test-coverage-of-c-static-library-as-called-by-separate-test-classe
+    # https://stackoverflow.com/questions/17949384/link-issue-with-whole-archive-no-whole-archive-options
+    #
+    #   add the whole static library to be visible by gcov
+    #   $<TARGET_FILE:lib1> generator expression evaluates to the full path 
+    #                       of the binary produced by the targed `lib1`
+    #
+    target_link_options(${PROJECT_NAME} PRIVATE 
+        -Wl,--whole-archive $<TARGET_FILE:lib1> -Wl,--no-whole-archive
     )
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        lib1
+    )
+endif()
 
-    ###############################################################################
-    # Code coverage instrumentation
-    ###############################################################################
-    if(CODE_COVERAGE)
-        target_code_coverage(${PROJECT_NAME} ALL
-            EXCLUDE ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/include/*
-        )
-    endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    Catch2::Catch2
+)
 
-    ###############################################################################
-    # CTEST
-    ###############################################################################
-    include(CTest)
-    include(Catch)
-    catch_discover_tests(${PROJECT_NAME})
+###############################################################################
+# Code coverage instrumentation
+###############################################################################
+if(CODE_COVERAGE)
+    target_code_coverage(${PROJECT_NAME} ALL
+        EXCLUDE ${CMAKE_SOURCE_DIR}/extern/libs/prebuilt/catch2/include/*
+    )
+endif()
+
+###############################################################################
+# CTEST
+###############################################################################
+include(CTest)
+include(Catch)
+catch_discover_tests(${PROJECT_NAME})
 ```

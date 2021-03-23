@@ -38,6 +38,31 @@ jobs:
           # run build using '-j [parallel]' to use multiple threads to build
           parallel: 8
   
+  testing:
+    name: Test and generate coverage report
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install gcov
+      run: |
+        apt-get install -y lcov
+
+    - name: Clone the repository
+      uses: actions/checkout@v2
+      with:
+        path: code
+        build-dir: ${{ runner.workspace }}/build
+        # will set the CC & CXX for cmake
+        cc: gcc
+        cxx: g++
+        build-type: Debug
+        # Extra options pass to cmake while configuring project
+        configure-options: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DLOG_CMAKE_VARIABLES=ON -DCODE_COVERAGE=ON
+        run-test: true
+        ctest-options: -s
+        # install the build using cmake --install
+        install-build: false
+        parallel: 8
+
   coverage_report:
     name: Generate coverage report
     needs: testing

@@ -62,7 +62,7 @@ In each project the CMakeFiles.txt are as follows:
 THIS APPROACH ONLY WORKS ON LINUX, as it is using `gcov`.
 
 Usually there are the "standard" flags to be set to get the coverage instrumentation:
-    ```CMake
+    ```Cmake
     SET(CMAKE_CXX_FLAGS "-g -O0 --coverage -fprofile-arcs -ftest-coverage")
     ```
 While there is no real problem with this approach, it can get quite ugly in a complex situation.
@@ -83,15 +83,15 @@ A better approach is to use a ready-made CMake module, like `code-coverage.cmake
 Getting coverage reports for executables is pretty straight forward, following the examples:
 
 1  Add the `code-coverage.cmake` module to `CMAKE_MODULE_PATH` variable
-    ```CMake
+    ```Cmake
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
     ```
 2. Include the `code-coverage.cmake` module
-    ```CMake
+    ```Cmake
     include(code-coverage)
     ```
 3. Enable coverage by using one of the several provided functions
-    ```CMake
+    ```Cmake
     # Adds instrumentation to all targets
     add_code_coverage()
     
@@ -105,7 +105,8 @@ Getting coverage reports for executables is pretty straight forward, following t
 
     # or
 
-    # As an executable target, the reports will exclude the non-covered.cpp file, and any files in a test/ folder.
+    # As an executable target, the reports will exclude the non-covered.cpp file,
+    # and any files in a test/ folder.
     target_code_coverage(theExe EXCLUDE non_covered.cpp test/*) 
     ```
 
@@ -129,7 +130,7 @@ The solution is a bit hacky, but it works, so I'm fine with it.
 
 If we're running a coverage build, link the library "manually" by setting `target_link_options` between the 2 linker flas; if not, use the normal "CMakey" way; then continue by adding the rest of the dependencies.
 
-    ```
+    ```Cmake
     if(CODE_COVERAGE)
         target_link_options(${PROJECT_NAME} PRIVATE 
             -Wl,--whole-archive $<TARGET_FILE:lib1> -Wl,--no-whole-archive

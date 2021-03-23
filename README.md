@@ -1,7 +1,9 @@
-# cmake-coverage
+# cmake-coverage [![CI](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml)
+
 
 A simple-ish project using CMake and gcov to generate coverage reports.
 The sub-projects are simply named `lib1`, `lib2` and `main-exe` for the sake of clarity.
+
 
 External libraries\modules\tools used:
 - [Catch2](https://github.com/catchorg/Catch2)  - excelent C++ testing library
@@ -9,9 +11,6 @@ External libraries\modules\tools used:
 - [Vagrant](https://www.vagrantup.com)   - " tool for building and managing virtual machine environments in a single workflow."
 - [VirtualBox](https://www.virtualbox.org)
 
-
-
-[![CI](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/smeualex/cmake-coverage/actions/workflows/build.yml)
 
 ## Project Structure
 

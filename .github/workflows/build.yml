@@ -49,7 +49,6 @@ jobs:
     - name: Clone the repository
       uses: actions/checkout@v2
       with:
-        path: code
         build-dir: ${{ runner.workspace }}/build
         # will set the CC & CXX for cmake
         cc: gcc
@@ -63,18 +62,6 @@ jobs:
         install-build: false
         parallel: 8
 
-  coverage_report:
-    name: Generate coverage report
-    needs: testing
-    runs-on: ubuntu-latest
-    steps:
-    - name: Clone the repository
-      uses: actions/checkout@v2
-    - name: Download code coverage from GitHub
-      uses: actions/download-artifact@v2
-      with:
-        name: code-coverage
-        path: coverage
     - name: Report code coverage
       uses: zgosalvez/github-actions-report-lcov@26957abb761285d2a89b2d47f77f0fe7965c437e
       with:

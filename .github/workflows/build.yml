@@ -62,6 +62,13 @@ jobs:
         install-build: false
         parallel: 8
         
+    - name: Run script stuff
+      run: |
+        echo "================================================================================"
+        ls -lha /home/runner/work/cmake-coverage/build/
+        echo "================================================================================"
+        ls -lha /home/runner/work/cmake-coverage/build/Linux-i686/Debug/ccov
+        echo "================================================================================"
     - name: Upload the coverage data
       uses: actions/upload-artifact@v2
       with:

@@ -50,6 +50,3 @@ enable_testing()
 add_subdirectory(lib1)
 add_subdirectory(lib2)
 add_subdirectory(main-exe)
-
-# again a comment to test GPG key
-# aaaand a new comment

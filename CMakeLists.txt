@@ -50,5 +50,3 @@ enable_testing()
 add_subdirectory(lib1)
 add_subdirectory(lib2)
 add_subdirectory(main-exe)
-
-# test commit
